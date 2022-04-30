@@ -7,6 +7,7 @@ install :
      	then mkdir $(UTILS_BIN); \
      	fi
 		@cp bashutils/echocolors.sh $(UTILS_BIN)
+		@cp bashutils/utilmethods.sh $(UTILS_BIN)
 
 		@echo "Installing syncnas"
 		@chmod +x syncnas/syncnas.sh
@@ -26,3 +27,4 @@ uninstall :
 uninstallutils :
 		@echo "Removing bashutils"
 		@rm "${INSTALL_DIR}/bashutils/echocolors.sh"
+		@rm "${INSTALL_DIR}/bashutils/utilmethods.sh"
