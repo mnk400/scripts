@@ -6,12 +6,12 @@ function cmp_and_cp() {
     then
         if cmp --silent -- "${SOURCE_FILE}" "${TARGET_FILE}"
         then
-            echoInfo "No changes to ${SOURCE_FILE}"
+            echo "No changes to ${SOURCE_FILE}"
         else
-            echoInfo "Updating ${TARGET_FILE}"
+            echo "Updating ${TARGET_FILE}"
             cp "${SOURCE_FILE}" "${TARGET_FILE}"
         fi
     else
-        echoWarn "${SOURCE_FILE} not found"
+        echo "${SOURCE_FILE} not found"
     fi
 }

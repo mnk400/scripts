@@ -1,7 +1,18 @@
 #!/bin/bash
 
+# Required parameters:
+# @raycast.schemaVersion 1
+# @raycast.title Update Dotfiles
+# @raycast.mode compact
+
+# Optional parameters:
+# @raycast.icon 🔖
+
+# Documentation:
+# @raycast.description Add any chagnes made to dotfiles and push to github
+# @raycast.author Manik
+
 # Script to auto update all the tracked files in my dot file repository
-source echocolors.sh
 source utilmethods.sh
 
 # Original Config file locations
@@ -15,8 +26,8 @@ VSCODE_CONF_REPO="${HOME}/.vscode.settings.json"
 # Checking for a commit message
 if [ "$#" -gt 1 ]
 then
-    echoWarn "Illegal number of parameters"
-    exit
+    echo "Illegal number of parameters"
+    exit 1
 fi
 
 # Moving iterm config if any changes
@@ -45,8 +56,8 @@ if [[ $? -eq 0 ]]
 then
     # Pushing to github
     yadm push
-    echoSuccess "Pushed to Github"
+    echo "Pushed to Github"
 else
-    echoError "No changes to push"
+    echo "No changes to push"
 fi
 

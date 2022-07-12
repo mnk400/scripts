@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Host information
-HOST='waterfall.lan'
-DIR_ON_HOST="/Volumes/share/NAS"
+HOST='192.168.0.3'
+DIR_ON_HOST="/Volumes/woof/Wolf"
 
 # Host paths
 DOC_ON_HOST="${DIR_ON_HOST}/Documents"
@@ -15,7 +15,7 @@ PROJ_LOCAL="${HOME}/Projects/"
 PICS_LOCAL="${HOME}/Pictures/"
 
 # Excludes
-PICS_EXCLUDE="*Library"
+PICS_EXCLUDE="*Library*"
 
 source echocolors.sh
 

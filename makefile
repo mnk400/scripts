@@ -1,21 +1,17 @@
 INSTALL_DIR = "/usr/local/bin"
-UTILS_BIN = "${INSTALL_DIR}/bashutils"
 
 install : 
 		@echo "Installing bashutils"
-		@if ! test -d $(UTILS_BIN); \
-     	then mkdir $(UTILS_BIN); \
-     	fi
-		@cp bashutils/echocolors.sh $(UTILS_BIN)
-		@cp bashutils/utilmethods.sh $(UTILS_BIN)
+		@cp bashutils/echocolors.sh $(INSTALL_DIR)
+		@cp bashutils/utilmethods.sh $(INSTALL_DIR)
 
 		@echo "Installing syncnas"
-		@chmod +x syncnas/syncnas.sh
-		@cp syncnas/syncnas.sh $(INSTALL_DIR)
+		@chmod +x nas/syncnas.sh
+		@cp nas/syncnas.sh $(INSTALL_DIR)
 
 		@echo "Installing updatedots"
-		@chmod +x updatedots/updatedots.sh
-		@cp updatedots/updatedots.sh $(INSTALL_DIR)
+		@chmod +x dotfiles/updatedots.sh
+		@cp dotfiles/updatedots.sh $(INSTALL_DIR)
 
 uninstall : 
 		@echo "Removing syncnas"
@@ -26,5 +22,5 @@ uninstall :
 
 uninstallutils :
 		@echo "Removing bashutils"
-		@rm "${INSTALL_DIR}/bashutils/echocolors.sh"
-		@rm "${INSTALL_DIR}/bashutils/utilmethods.sh"
+		@rm "${INSTALL_DIR}/echocolors.sh"
+		@rm "${INSTALL_DIR}/utilmethods.sh"
