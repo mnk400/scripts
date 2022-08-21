@@ -6,7 +6,7 @@
 # @raycast.mode compact
 
 # Optional parameters:
-# @raycast.icon 🔖
+# @raycast.icon 💾
 
 # Documentation:
 # @raycast.description Add any chagnes made to dotfiles and push to github
@@ -31,10 +31,10 @@ then
 fi
 
 # Moving iterm config if any changes
-cmp_and_cp "${ITERM_CONF}" "${ITERM_CONF_REPO}"
+cmpcp "${ITERM_CONF}" "${ITERM_CONF_REPO}"
 
 # Moving VSCode config if any changes
-cmp_and_cp "${VSCODE_CONF}" "${VSCODE_CONF_REPO}"
+cmpcp "${VSCODE_CONF}" "${VSCODE_CONF_REPO}"
 
 if [[ "$#" == 0 ]]
 then

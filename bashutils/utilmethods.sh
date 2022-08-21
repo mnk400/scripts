@@ -1,5 +1,5 @@
 
-function cmp_and_cp() {
+function cmpcp() {
     SOURCE_FILE=$1
     TARGET_FILE=$2
     if [[ ! -d ${SOURCE_FILE} ]]
