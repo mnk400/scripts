@@ -3,3 +3,4 @@
 build
 dist
 Desktop.ini
+*.log

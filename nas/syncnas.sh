@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Host information
-HOST='192.168.0.3'
-DIR_ON_HOST="/Volumes/wolf/Wolf"
+HOST='192.168.0.23'
+DIR_ON_HOST="/Volumes/WD_My_Passport_25E2-part2/Albatross"
 
 # Host paths
 DOC_ON_HOST="${DIR_ON_HOST}/Documents"
@@ -16,6 +16,7 @@ PICS_LOCAL="${HOME}/Pictures/"
 
 # Excludes
 PICS_EXCLUDE="*Library*"
+PROJ_EXCLUDE="stable-diffusion-webui"
 
 # Enable
 ENABLE_DOCS=true
@@ -44,6 +45,16 @@ function rsync_local_to_host() {
 # Checking if connected to the NAS
 if ping -q -c 1 -W 1 $HOST >/dev/null; 
 then	
+	echo """
+ ▄▀▀▀▀▄  ▄▀▀▄ ▀▀▄  ▄▀▀▄ ▀▄  ▄▀▄▄▄▄  
+█ █   ▐ █   ▀▄ ▄▀ █  █ █ █ █ █    ▌ 
+   ▀▄   ▐     █   ▐  █  ▀█ ▐ █      
+▀▄   █        █     █   █    █      
+ █▀▀▀       ▄▀    ▄▀   █    ▄▀▄▄▄▄▀ 
+ ▐          █     █    ▐   █     ▐  
+            ▐     ▐        ▐        
+    
+"""
 	echo "$HOST online, checking if mounted"
 	
 	# Checking if the path to NAS exists, i.e. if it's mounted
@@ -65,13 +76,15 @@ then
 	
 	if [[ $ENABLE_PROJ = true ]]
 	then
-		rsync_local_to_host "${PROJ_LOCAL}" "${PROJ_ON_HOST}" "Projects"
+		rsync_local_to_host "${PROJ_LOCAL}" "${PROJ_ON_HOST}" "Projects" "${PROJ_EXCLUDE}"
 	fi
 
 	if [[ $ENABLE_PICS = true ]]
 	then
 		rsync_local_to_host "${PICS_LOCAL}" "${PICS_ON_HOST}" "Pictures" "${PICS_EXCLUDE}"
 	fi
+
+	date +"Sync completed at %I:%M %p on %d %b "
 	
 else
 	# Quitting if not host not found online

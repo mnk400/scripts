@@ -6,7 +6,7 @@
 # @raycast.mode compact
 
 # Optional parameters:
-# @raycast.icon 💾
+# @raycast.icon ../icons/code.png
 
 # Documentation:
 # @raycast.description Add any chagnes made to dotfiles and push to github
