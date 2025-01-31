@@ -1,0 +1,9 @@
+#!/usr/bin/osascript
+
+on run argv
+    if (count of argv) > 0 then
+        tell application "System Events"
+            keystroke quoted form of (item 1 of argv) using {command down, option down, control down, shift down}
+        end tell
+    end if
+end run

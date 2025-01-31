@@ -26,7 +26,7 @@ echo """
     """
 
 SOURCE_DIRS=("RICOH GR" "X-T5")
-DEST_DIR="/Users/manik/Pictures/Photo Archive/2024"
+DEST_DIR="/Users/manik/Pictures/Photo Archive/Digital/2025"
 
 for dir in "${SOURCE_DIRS[@]}"; do
    if [ -d "/Volumes/$dir" ]; then
@@ -39,8 +39,14 @@ for dir in "${SOURCE_DIRS[@]}"; do
         echo "Copying photos from $PHOTO_DIR to $DEST_DIR"
         cp -v -r "$PHOTO_DIR" "$DEST_DIR"
         echo -e "---------------------------------------------------\n"
+        echo "Opening Photos App to Import Pictures"
+        sleep 0.2
+        osascript -e 'tell application "Photos" to activate'
+        sleep 0.2
+        osascript -e 'tell application "System Events"' -e 'keystroke "I" using {shift down, command down}' -e 'end tell'
    else
         echo -e "$dir not found. Skipping.\n"
+        exit 1
    fi
 done
 
