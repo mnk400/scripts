@@ -1,3 +1,6 @@
+# ------------------------------------------------------
+# File Utils Library - Common file functions for scripts
+# ------------------------------------------------------
 
 function cmpcp() {
     SOURCE_FILE=$1

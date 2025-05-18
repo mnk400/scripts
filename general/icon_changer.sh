@@ -21,7 +21,7 @@ fileicon set /Applications/Google\ Chrome.app /Users/manik/Documents/Misc/Icons/
 
 # Fleet
 echo "$pspsps" | sudo -S cp /Users/manik/Documents/Misc/Icons/code.icns /Applications/Fleet.app/Contents/Resources/Fleet.icns
-echo "$pspsps" | sudo -S cp /Users/manik/Documents/Misc/Icons/code.png /Applications/Fleet.app/Contents/app/icons/fleet-appicon.png
+echo "$pspsps" | sudo -S cp /Users/manik/Documents/Misc/Icons/code.png /Applications/Fleet.app/Contents/app/icons/os-appicon.png
 
 # MS Word
 echo "$pspsps" | sudo -S chmod 777 /Applications/Microsoft\ Word.app

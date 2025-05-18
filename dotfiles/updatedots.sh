@@ -12,8 +12,7 @@
 # @raycast.description Add any chagnes made to dotfiles and push to github
 # @raycast.author Manik
 
-# Script to auto update all the tracked files in my dot file repository
-source utilmethods.sh
+source file_utils.sh
 
 # Original Config file locations
 ITERM_CONF="${HOME}/Library/Preferences/com.googlecode.iterm2.plist"
