@@ -54,7 +54,7 @@ check_nas_availability() {
     success "NAS is online"
     info "Checking if NAS is mounted..."
     
-    if [[ ! -d "${CONFIG_NAS_VOLUME}/Downloads" ]]; then
+    if [[ ! -d "${CONFIG_NAS_VOLUME}/Documents" ]]; then
         error "NAS is not mounted. Please mount it first."
         warning "Automatic mounting is work in progress."
         return 1
