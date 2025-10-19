@@ -2,6 +2,9 @@
 # File Utils Library - Common file functions for scripts
 # ------------------------------------------------------
 
+# Compare and copy file if different
+# Usage: cmpcp <source_file> <target_file>
+# Copies source to target only if files differ or target doesn't exist
 function cmpcp() {
     SOURCE_FILE=$1
     TARGET_FILE=$2

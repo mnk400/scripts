@@ -13,34 +13,39 @@
 # @raycast.description Changes icons to custom icons for a certain number of stubborn apps
 # @raycast.author Manik
 
+set -e
+
 pspsps=$(security find-generic-password -w -s 'pspsps' -a $USER)
+ICON_DIR="/Users/manik/Documents/Misc/Icons"
 
-# Google Chrome
-echo "$pspsps" | sudo -S chmod 777 /Applications/Google\ Chrome.app &>/dev/null
-fileicon set /Applications/Google\ Chrome.app /Users/manik/Documents/Misc/Icons/Chrome.icns &>/dev/null
+# Function to set icon with fileicon
+set_icon() {
+    echo "$pspsps" | sudo -S chmod 777 "$1" &>/dev/null
+    fileicon set "$1" "$2" &>/dev/null
+}
 
-# Fleet
-echo "$pspsps" | sudo -S cp /Users/manik/Documents/Misc/Icons/code.icns /Applications/Fleet.app/Contents/Resources/Fleet.icns
-echo "$pspsps" | sudo -S cp /Users/manik/Documents/Misc/Icons/code.png /Applications/Fleet.app/Contents/app/icons/os-appicon.png
+# Function to copy icon files directly
+copy_icon() {
+    echo "$pspsps" | sudo -S cp "$2" "$1"
+}
 
-# MS Word
-echo "$pspsps" | sudo -S chmod 777 /Applications/Microsoft\ Word.app
-fileicon set /Applications/Microsoft\ Word.app /Users/manik/Documents/Misc/Icons/Word.icns &>/dev/null
+# Apps using fileicon: app_path icon_file
+declare -a fileicon_apps=(
+    "/Applications/Google Chrome.app" "$ICON_DIR/Chrome.icns"
+    "/Applications/Microsoft Word.app" "$ICON_DIR/Word.icns"
+    "/Applications/Microsoft PowerPoint.app" "$ICON_DIR/PowerPoint.icns"
+    "/Applications/Noto.app" "$ICON_DIR/Noto.png"
+    "/Applications/NepTunes.app" "$ICON_DIR/Silicio.icns"
+    "/Applications/logioptionsplus.app" "$ICON_DIR/options.icns"
+)
 
-# MS PowerPoint
-echo "$pspsps" | sudo -S chmod 777 /Applications/Microsoft\ PowerPoint.app
-fileicon set /Applications/Microsoft\ PowerPoint.app /Users/manik/Documents/Misc/Icons/PowerPoint.icns &>/dev/null
+# Process fileicon apps
+for ((i=0; i<${#fileicon_apps[@]}; i+=2)); do
+    set_icon "${fileicon_apps[i]}" "${fileicon_apps[i+1]}"
+done
 
-# Noto
-echo "$pspsps" | sudo -S chmod 777 /Applications/Noto.app
-fileicon set /Applications/Noto.app /Users/manik/Documents/Misc/Icons/Noto.png &>/dev/null
-
-# NepTunes
-echo "$pspsps" | sudo -S chmod 777 /Applications/NepTunes.app
-fileicon set /Applications/NepTunes.app /Users/manik/Documents/Misc/Icons/Silicio.icns &>/dev/null
-
-# Logi Options+
-echo "$pspsps" | sudo -S chmod 777 /Applications/logioptionsplus.app
-fileicon set /Applications/logioptionsplus.app /Users/manik/Documents/Misc/Icons/options.icns &>/dev/null
+# Fleet (special case - direct file copy)
+copy_icon "/Applications/Fleet.app/Contents/Resources/Fleet.icns" "$ICON_DIR/code.icns"
+copy_icon "/Applications/Fleet.app/Contents/app/icons/os-appicon.png" "$ICON_DIR/code.png"
 
 date +"Last refreshed at %I:%M %p on %d %b"

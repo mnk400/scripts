@@ -9,54 +9,28 @@
 # @raycast.icon ../icons/code.png
 
 # Documentation:
-# @raycast.description Add any chagnes made to dotfiles and push to github
+# @raycast.description Add any changes made to dotfiles and push to github
 # @raycast.author Manik
 
 source file_utils.sh
 
-# Original Config file locations
-ITERM_CONF="${HOME}/Library/Preferences/com.googlecode.iterm2.plist"
-VSCODE_CONF="${HOME}/Library/Application Support/Code/User/settings.json"
+# Exit on any error
+set -e
 
-# Dot file repository locations
-ITERM_CONF_REPO="${HOME}/.iterm.conf"
-VSCODE_CONF_REPO="${HOME}/.vscode.settings.json"
+# Validate arguments
+[[ $# -gt 1 ]] && { echo "Usage: $0 [commit_message]"; exit 1; }
 
-# Checking for a commit message
-if [ "$#" -gt 1 ]
-then
-    echo "Illegal number of parameters"
-    exit 1
-fi
+# Config file pairs
+configs=(
+    "${HOME}/Library/Preferences/com.googlecode.iterm2.plist" "${HOME}/.iterm.conf"
+    "${HOME}/Library/Application Support/com.mitchellh.ghostty/config" "${HOME}/.ghostty.config"
+)
 
-# Moving iterm config if any changes
-cmpcp "${ITERM_CONF}" "${ITERM_CONF_REPO}"
+# Update configs
+for ((i=0; i<${#configs[@]}; i+=2)); do
+    cmpcp "${configs[i]}" "${configs[i+1]}"
+done
 
-# Moving VSCode config if any changes
-cmpcp "${VSCODE_CONF}" "${VSCODE_CONF_REPO}"
-
-if [[ "$#" == 0 ]]
-then
-    msg="Scripted Auto Update"
-elif [[ "$#" == 1 ]]
-then
-    msg="$1"
-fi
-
-# Creating a commit message
-commitMsg="$msg: $(date)"
-
-# Adding all the tracked files
-yadm add -u
-
-# Committing
-yadm commit -m "$commitMsg"
-if [[ $? -eq 0 ]]
-then
-    # Pushing to github
-    yadm push
-    echo "Pushed to Github"
-else
-    echo "No changes to push"
-fi
-
+# Commit and push
+msg="${1:-Scripted Auto Update}: $(date)"
+yadm add -u && yadm commit -m "$msg" && { yadm push; echo "Pushed to Github"; } || echo "No changes to push"
