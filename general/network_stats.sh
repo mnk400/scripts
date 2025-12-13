@@ -4,7 +4,7 @@
 # @raycast.schemaVersion 1
 # @raycast.title Network
 # @raycast.mode inline
-# @raycast.refreshTime 10m
+# @raycast.refreshTime disabled
 
 # Optional parameters:
 # @raycast.icon ../icons/network.png
@@ -15,8 +15,7 @@
 # @raycast.author Manik
 
 function get_wifi_ssid () {
-  ssid=$(/usr/libexec/PlistBuddy -c 'Print :0:_items:0:spairport_airport_interfaces:0:spairport_current_network_information:_name' /dev/stdin <<< "$(system_profiler SPAirPortDataType -xml)" 2> /dev/null)
-
+  ssid=$(get-ssid 2>/dev/null)
   echo "$ssid"
 }
 

@@ -22,7 +22,7 @@ echo """
     \`-----'------'------'
 --------------------------------
    SD Card Photo Sync Utility
---------------------------------    
+--------------------------------
     """
 
 # Config
@@ -57,62 +57,62 @@ for dir in "${SOURCE_DIRS[@]}"; do
     if [ -d "/Volumes/$dir" ]; then
         CARD_FOUND=true
         echo -e "$dir attached.\n"
-        
+
         if [ "$dir" == "RICOH GR" ]; then
             PHOTO_DIR="/Volumes/$dir/DCIM/100RICOH/"
         elif [ "$dir" == "X-T5" ]; then
             PHOTO_DIR="/Volumes/$dir/DCIM/104_FUJI/"
         fi
-        
+
         if [ ! -d "$PHOTO_DIR" ]; then
             echo "Source directory $PHOTO_DIR not found. Skipping."
             continue
         fi
-        
+
         FILE_COUNT=$(find "$PHOTO_DIR" -type f | wc -l)
         if [ "$FILE_COUNT" -eq 0 ]; then
             echo "No files found in $PHOTO_DIR. Skipping."
             continue
         fi
-        
+
         echo "Found $FILE_COUNT files in $PHOTO_DIR"
         echo "Will copy to $DEST_DIR"
-        
+
         echo "Copying photos from $PHOTO_DIR to $DEST_DIR"
         echo "This may take a while depending on the number and size of files..."
-        
+
         rsync -a --info=name,progress2 "$PHOTO_DIR" "$DEST_DIR" | tee -a "$LOG_FILE"
-        
+
         if [ $? -eq 0 ]; then
             echo "Copy completed successfully!" | tee -a "$LOG_FILE"
         else
             echo "Error occurred during copy. Check the log file: $LOG_FILE" | tee -a "$LOG_FILE"
         fi
-        
+
         echo -e "---------------------------------------------------\n"
         echo "Opening Photos App to Import Pictures from $DEST_DIR"
-        
+
         osascript -e 'tell application "Photos" to activate'
         sleep 0.5
         osascript -e 'tell application "System Events"' -e 'keystroke "I" using {shift down, command down}' -e 'end tell'
         sleep 1
-        
+
         osascript <<EOF
         tell application "System Events"
             tell process "Photos"
                 repeat until (exists sheet 1 of window 1)
                     delay 0.5
                 end repeat
-                
+
                 key code 5 using {command down, shift down}
                 delay 0.5
-                
+
                 keystroke "$DEST_DIR"
                 delay 0.5
-                
+
                 keystroke return
                 delay 0.5
-                
+
                 keystroke return
             end tell
         end tell

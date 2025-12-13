@@ -27,8 +27,8 @@ echo """
 
 SOURCE_DIRS=("RICOH GR" "X-T5")
 
-mkdir /tmp/workdir3417958
-cd /tmp/workdir3417958
+WORKDIR=$(mktemp -d)
+cd "$WORKDIR"
 
 for dir in "${SOURCE_DIRS[@]}"; do
    if [ -d "/Volumes/$dir" ]; then
@@ -59,4 +59,4 @@ for dir in "${SOURCE_DIRS[@]}"; do
    fi
 done
 
-rm -r /tmp/workdir3417958
+rm -r "$WORKDIR"

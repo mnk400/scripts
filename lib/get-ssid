@@ -1,0 +1,9 @@
+#!/usr/bin/env swift
+import CoreWLAN
+let client = CWWiFiClient.shared()
+if let interface = client.interface(withName: "en0"),
+   let set = interface.configuration()?.networkProfiles {
+    for case let p as CWNetworkProfile in set {
+        if let s = p.ssid, !s.isEmpty { print(s); exit(0) }
+    }
+}

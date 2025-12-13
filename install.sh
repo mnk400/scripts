@@ -2,8 +2,8 @@
 
 # ------------------------------------------------------------------
 # Install Script - Adds scripts directory and subdirectories to PATH
-# -----------------------------------------------------------------
-s
+# ------------------------------------------------------------------
+
 SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "Installing Scripts from: $SCRIPTS_DIR"
 
