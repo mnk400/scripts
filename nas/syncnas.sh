@@ -15,9 +15,14 @@ check_nas() {
         return 1
     fi
     
+    success "NAS is online"
+    
     if [[ ! -d "${CONFIG_NAS_VOLUME}" ]]; then
-        error "NAS volume not mounted at ${CONFIG_NAS_VOLUME}"
-        return 1
+        warning "NAS not mounted. Attempting to mount..."
+        if ! ./mount_nas.sh; then
+            error "Failed to mount NAS automatically"
+            return 1
+        fi
     fi
     
     success "NAS is available"
@@ -68,8 +73,11 @@ sync_directory() {
 }
 
 show_usage() {
+    # Use wrapper command name if set, otherwise default to script name
+    local script_name="${NAS_WRAPPER_CMD:-syncnas.sh}"
+    
     cat << EOF
-Usage: $(basename "$0") [OPTION]
+Usage: ${script_name} [OPTION]
 
 Sync directories to NAS using rclone.
 
@@ -81,10 +89,10 @@ Options:
   -h, --help   Show this help
 
 Examples:
-  $(basename "$0")           # Sync all directories
-  $(basename "$0") photos    # Sync only photos
-  $(basename "$0") documents # Sync only documents
-  $(basename "$0") projects  # Sync only projects
+  ${script_name}           # Sync all directories
+  ${script_name} photos    # Sync only photos
+  ${script_name} documents # Sync only documents
+  ${script_name} projects  # Sync only projects
 EOF
 }
 

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# Required parameters:
+# @raycast.schemaVersion 1
+# @raycast.title Toggle Monocle
+# @raycast.mode silent
+# @raycast.refreshTime disabled
+
+# Optional parameters:
+# @raycast.icon ../icons/monocle.png
+# Documentation:
+# @raycast.description Turn Monocle on and off
+# @raycast.author Manik
+
+open monocle://toggle
+

@@ -8,7 +8,7 @@ show_help() {
     echo ""
     echo "Available commands:"
     echo "  fix-unraid-networking    Restart Avahi daemon when box.local stops resolving"
-    echo "  update-docker            Update all Docker containers on UnRaid server"
+    echo "  update-unraid-docker     Update all Docker containers on UnRaid server"
     echo "  help                     Show this help message"
 }
 
