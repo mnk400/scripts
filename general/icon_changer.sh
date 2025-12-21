@@ -13,8 +13,6 @@
 # @raycast.description Changes icons to custom icons for a certain number of stubborn apps
 # @raycast.author Manik
 
-set -e
-
 pspsps=$(security find-generic-password -w -s 'pspsps' -a $USER)
 ICON_DIR="/Users/manik/Documents/Misc/Icons"
 
@@ -43,9 +41,5 @@ declare -a fileicon_apps=(
 for ((i=0; i<${#fileicon_apps[@]}; i+=2)); do
     set_icon "${fileicon_apps[i]}" "${fileicon_apps[i+1]}"
 done
-
-# Fleet (special case - direct file copy)
-copy_icon "/Applications/Fleet.app/Contents/Resources/Fleet.icns" "$ICON_DIR/code.icns"
-copy_icon "/Applications/Fleet.app/Contents/app/icons/os-appicon.png" "$ICON_DIR/code.png"
 
 date +"Last refreshed at %I:%M %p on %d %b"

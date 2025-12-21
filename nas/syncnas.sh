@@ -82,17 +82,15 @@ Usage: ${script_name} [OPTION]
 Sync directories to NAS using rclone.
 
 Options:
-  documents    Sync only Documents folder
-  projects     Sync only Projects folder  
-  photos       Sync only Pictures folder
-  all          Sync all directories (default)
-  -h, --help   Show this help
+  documents    Sync only cocuments folder
+  projects     Sync only projects folder  
+  photos       Sync only photos folder
+  *            Sync documents & photos (default)
+  help         Show this help
 
 Examples:
-  ${script_name}           # Sync all directories
+  ${script_name}           # Sync documents & photos directories
   ${script_name} photos    # Sync only photos
-  ${script_name} documents # Sync only documents
-  ${script_name} projects  # Sync only projects
 EOF
 }
 
@@ -101,11 +99,11 @@ main() {
     local mode="${1:-all}"
     
     case "$mode" in
-        -h|--help)
+        -h|--help|help)
             show_usage
             exit 0
             ;;
-        documents|projects|photos|all)
+        documents|projects|photos)
             ;;
         *)
             error "Invalid option: $mode"
@@ -136,7 +134,7 @@ main() {
         sync_directory "Documents" "${HOME}/Documents/" "${CONFIG_NAS_VOLUME}/Documents/" && ((success_count++))
     fi
     
-    if [[ "$mode" == "all" || "$mode" == "projects" ]]; then
+    if [[ "$mode" == "projects" ]]; then
         ((total_count++))
         sync_directory "Projects" "${HOME}/Projects/" "${CONFIG_NAS_VOLUME}/Projects/" && ((success_count++))
     fi
@@ -155,4 +153,3 @@ main() {
 }
 
 main "$@"
- ssssmhsasd

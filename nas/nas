@@ -6,7 +6,7 @@ show_help() {
     echo "Usage: nas <command>"
     echo ""
     echo "Available commands:"
-    echo "  sync [all|documents|projects|photos]   Sync directories to Box (default: all)"
+    echo "  sync [documents|projects|photos]       Sync directories to Box (default: all)"
     echo "  mount                                  Mount the UnRaid Box NAS"
     echo "  help                                   Show this help message"
 }

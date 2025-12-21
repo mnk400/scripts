@@ -12,5 +12,9 @@
 # @raycast.description Turn Monocle on and off
 # @raycast.author Manik
 
+active_app=$(osascript -e 'tell application "System Events" to get name of first application process whose frontmost is true')
+
 open monocle://toggle
+
+osascript -e "tell application \"$active_app\" to activate"
 

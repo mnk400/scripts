@@ -1,29 +1,73 @@
 #!/bin/bash
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-SCRIPTS_DIR="$SCRIPT_DIR/runbook-scripts"
+SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 show_help() {
-    echo "Usage: runbook <command>"
+    echo "Usage: runbook <topic> <command>"
     echo ""
-    echo "Available commands:"
-    echo "  fix-unraid-networking    Restart Avahi daemon when box.local stops resolving"
-    echo "  update-unraid-docker     Update all Docker containers on UnRaid server"
-    echo "  help                     Show this help message"
+    echo "Available topics:"
+    echo "  unraid    UnRaid server management commands"
+    echo "  adguard   AdGuard Home protection control"
+    echo "  help      Show this help message"
+}
+
+show_unraid_help() {
+    echo "Usage: runbook unraid <command>"
+    echo ""
+    echo "Available unraid commands:"
+    echo "  fix-networking    Restart Avahi daemon when box.local stops resolving"
+    echo "  update-docker     Update all Docker containers on UnRaid server"
+}
+
+show_adguard_help() {
+    echo "Usage: runbook adguard <command>"
+    echo ""
+    echo "Available adguard commands:"
+    echo "  on     Enable AdGuard Home protection"
+    echo "  off    Disable AdGuard Home protection"
 }
 
 case "$1" in
-    "fix-unraid-networking")
-        "$SCRIPTS_DIR/fix-unraid-local.sh"
+    "unraid")
+        case "$2" in
+            "fix-networking")
+                "$SCRIPTS_DIR/unraid/unraid-fix-networking.sh"
+                ;;
+            "update-docker")
+                "$SCRIPTS_DIR/unraid/unraid-update-docker.sh"
+                ;;
+            ""|"help"|"--help"|"-h")
+                show_unraid_help
+                ;;
+            *)
+                echo "Unknown unraid command: $2"
+                echo ""
+                show_unraid_help
+                exit 1
+                ;;
+        esac
         ;;
-    "update-unraid-docker")
-        "$SCRIPTS_DIR/update-unraid-docker.sh"
+    "adguard")
+        case "$2" in
+            "on"|"off")
+                "$SCRIPTS_DIR/adguard/adguard-toggle.sh" "$2"
+                ;;
+            ""|"help"|"--help"|"-h")
+                show_adguard_help
+                ;;
+            *)
+                echo "Unknown adguard command: $2"
+                echo ""
+                show_adguard_help
+                exit 1
+                ;;
+        esac
         ;;
     "help"|"--help"|"-h"|"")
         show_help
         ;;
     *)
-        echo "Unknown command: $1"
+        echo "Unknown topic: $1"
         echo ""
         show_help
         exit 1
