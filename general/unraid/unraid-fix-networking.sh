@@ -1,4 +1,6 @@
 #!/bin/bash
+# Description: Restart Avahi daemon when box.local stops resolving
+
 echo "Checking if box.local is reachable..."
 if ping -c 1 box.local >/dev/null 2>&1; then
     echo "✓ box.local is already reachable - no fix needed"

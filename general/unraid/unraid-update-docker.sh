@@ -1,4 +1,5 @@
 #!/bin/bash
+# Description: Update all Docker containers on UnRaid server
 
 echo "Triggering Docker updates on UnRaid server..."
 ssh root@192.168.0.23 "

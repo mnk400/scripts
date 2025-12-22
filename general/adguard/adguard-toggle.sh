@@ -1,4 +1,5 @@
 #!/bin/bash
+# Description: Toggle AdGuard Home protection on/off
 
 # AdGuard Home Configuration
 ADGUARD_IP="${ADGUARD_IP:-192.168.0.25}"

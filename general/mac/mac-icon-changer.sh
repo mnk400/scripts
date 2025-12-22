@@ -7,7 +7,7 @@
 # @raycast.refreshTime disabled
 
 # Optional parameters:
-# @raycast.icon ../icons/brush.png
+# @raycast.icon ../../icons/brush.png
 
 # Documentation:
 # @raycast.description Changes icons to custom icons for a certain number of stubborn apps

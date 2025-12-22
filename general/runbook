@@ -1,75 +1,182 @@
 #!/bin/bash
+# Parent wrapper script around all my automation scripts
+# auto descovers automation scripts based on directory based topics
+# and reads descriptions from comment based metadata system (compatible w/ raycast)
 
 SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Extract metadata from script
+get_script_metadata() {
+    local script="$1"
+    local description=""
+    local usage=""
+
+    if [[ -f "$script" ]]; then
+        description=$(grep -m1 "^#.*@raycast\.description\|^#.*Description:" "$script" 2>/dev/null | sed 's/^#[[:space:]]*@raycast\.description[[:space:]]*//' | sed 's/^#[[:space:]]*Description:[[:space:]]*//')
+        usage=$(grep -m1 "^#.*Usage:" "$script" 2>/dev/null | sed 's/^#[[:space:]]*Usage:[[:space:]]*//')
+    fi
+
+    echo "${description:-No description available}|${usage}"
+}
+
+# Auto-discover topics (directories with executable scripts)
+discover_topics() {
+    find "$SCRIPTS_DIR" -maxdepth 1 -type d ! -name ".*" ! -path "$SCRIPTS_DIR" | sort | while read -r dir; do
+        topic=$(basename "$dir")
+        if find "$dir" -maxdepth 1 -type f -perm +111 | grep -q .; then
+            echo "$topic"
+        fi
+    done
+}
+
+# Auto-discover commands in a topic
+discover_commands() {
+    local topic="$1"
+    local topic_dir="$SCRIPTS_DIR/$topic"
+
+    if [[ -d "$topic_dir" ]]; then
+        find "$topic_dir" -maxdepth 1 -type f -perm +111 | sort | while read -r script; do
+            local basename=$(basename "$script")
+            local command_name="${basename%.*}"
+            # Remove topic prefix if present (e.g., unraid-fix-networking -> fix-networking)
+            command_name="${command_name#$topic-}"
+            echo "$command_name|$script"
+        done
+    fi
+}
+
+# Auto-discover standalone scripts (in root directory)
+discover_standalone() {
+    find "$SCRIPTS_DIR" -maxdepth 1 -type f -perm +111 ! -name "runbook*" | sort | while read -r script; do
+        local basename=$(basename "$script")
+        local command_name="${basename%.*}"
+        echo "$command_name|$script"
+    done
+}
+
 show_help() {
     echo "Usage: runbook <topic> <command>"
+    echo "       runbook <standalone-command>"
     echo ""
-    echo "Available topics:"
-    echo "  unraid    UnRaid server management commands"
-    echo "  adguard   AdGuard Home protection control"
-    echo "  help      Show this help message"
+
+    local topics=($(discover_topics))
+    if [[ ${#topics[@]} -gt 0 ]]; then
+        echo "Available topics:"
+        for topic in "${topics[@]}"; do
+            printf "  %-12s %s\n" "$topic" "$(find "$SCRIPTS_DIR/$topic" -maxdepth 1 -type f -perm +111 | wc -l | tr -d ' ') commands available"
+        done
+        echo ""
+    fi
+
+    local standalone_count=$(discover_standalone | wc -l | tr -d ' ')
+    if [[ $standalone_count -gt 0 ]]; then
+        echo "Standalone commands: $standalone_count available"
+        echo ""
+    fi
+
+    echo "Use 'runbook <topic> help' to see commands for a specific topic"
+    echo "Use 'runbook list' to see all available commands"
 }
 
-show_unraid_help() {
-    echo "Usage: runbook unraid <command>"
+show_topic_help() {
+    local topic="$1"
+    echo "Usage: runbook $topic <command>"
     echo ""
-    echo "Available unraid commands:"
-    echo "  fix-networking    Restart Avahi daemon when box.local stops resolving"
-    echo "  update-docker     Update all Docker containers on UnRaid server"
+    echo "Available $topic commands:"
+
+    discover_commands "$topic" | while IFS='|' read -r command script; do
+        local metadata=$(get_script_metadata "$script")
+        local description=$(echo "$metadata" | cut -d'|' -f1)
+        printf "  %-20s %s\n" "$command" "$description"
+    done
 }
 
-show_adguard_help() {
-    echo "Usage: runbook adguard <command>"
+list_all_commands() {
+    echo "All available commands:"
     echo ""
-    echo "Available adguard commands:"
-    echo "  on     Enable AdGuard Home protection"
-    echo "  off    Disable AdGuard Home protection"
+
+    # List topic commands
+    discover_topics | while read -r topic; do
+        echo "[$topic]"
+        discover_commands "$topic" | while IFS='|' read -r command script; do
+            local metadata=$(get_script_metadata "$script")
+            local description=$(echo "$metadata" | cut -d'|' -f1)
+            printf "  %-20s %s\n" "$command" "$description"
+        done
+        echo ""
+    done
+
+    # List standalone commands
+    local standalone_commands=$(discover_standalone)
+    if [[ -n "$standalone_commands" ]]; then
+        echo "[standalone]"
+        echo "$standalone_commands" | while IFS='|' read -r command script; do
+            local metadata=$(get_script_metadata "$script")
+            local description=$(echo "$metadata" | cut -d'|' -f1)
+            printf "  %-20s %s\n" "$command" "$description"
+        done
+    fi
 }
 
+# Main logic
 case "$1" in
-    "unraid")
-        case "$2" in
-            "fix-networking")
-                "$SCRIPTS_DIR/unraid/unraid-fix-networking.sh"
-                ;;
-            "update-docker")
-                "$SCRIPTS_DIR/unraid/unraid-update-docker.sh"
-                ;;
-            ""|"help"|"--help"|"-h")
-                show_unraid_help
-                ;;
-            *)
-                echo "Unknown unraid command: $2"
-                echo ""
-                show_unraid_help
-                exit 1
-                ;;
-        esac
-        ;;
-    "adguard")
-        case "$2" in
-            "on"|"off")
-                "$SCRIPTS_DIR/adguard/adguard-toggle.sh" "$2"
-                ;;
-            ""|"help"|"--help"|"-h")
-                show_adguard_help
-                ;;
-            *)
-                echo "Unknown adguard command: $2"
-                echo ""
-                show_adguard_help
-                exit 1
-                ;;
-        esac
-        ;;
     "help"|"--help"|"-h"|"")
         show_help
         ;;
+    "list")
+        list_all_commands
+        ;;
     *)
-        echo "Unknown topic: $1"
-        echo ""
-        show_help
-        exit 1
+        # Check if it's a topic
+        if [[ -d "$SCRIPTS_DIR/$1" ]]; then
+            topic="$1"
+            command="$2"
+
+            if [[ "$command" == "help" || "$command" == "--help" || "$command" == "-h" || -z "$command" ]]; then
+                show_topic_help "$topic"
+            else
+                # Find and execute the command
+                script_found=""
+                while IFS='|' read -r cmd script_path; do
+                    if [[ "$cmd" == "$command" ]]; then
+                        script_found="$script_path"
+                        break
+                    fi
+                done < <(discover_commands "$topic")
+
+                if [[ -n "$script_found" ]]; then
+                    invocation_curr_cmd=$(basename "$0")
+                    for arg in "$@"; do
+                        invocation_curr_cmd+=" $(printf %q "$arg")"
+                    done
+                    export INCOVATION_CMD=$invocation_curr_cmd
+                    exec "$script_found" "${@:3}"
+                    unset INCOVATION_CMD
+                else
+                    echo "Unknown $topic command: $command"
+                    echo ""
+                    show_topic_help "$topic"
+                    exit 1
+                fi
+            fi
+        else
+            # Check if it's a standalone command
+            script_found=""
+            while IFS='|' read -r cmd script_path; do
+                if [[ "$cmd" == "$1" ]]; then
+                    script_found="$script_path"
+                    break
+                fi
+            done < <(discover_standalone)
+
+            if [[ -n "$script_found" ]]; then
+                exec "$script_found" "${@:2}"
+            else
+                echo "Unknown topic or command: $1"
+                echo ""
+                show_help
+                exit 1
+            fi
+        fi
         ;;
 esac
