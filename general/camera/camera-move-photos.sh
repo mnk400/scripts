@@ -6,7 +6,7 @@
 # @raycast.mode fullOutput
 
 # Optional parameters:
-# @raycast.icon ../icons/cam.png
+# @raycast.icon ../../icons/cam.png
 
 # Documentation:
 # @raycast.description Copies photos from my camera's SD Cards to the correct directory

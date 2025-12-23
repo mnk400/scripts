@@ -6,7 +6,7 @@
 # @raycast.mode silent
 
 # Optional parameters:
-# @raycast.icon ../icons/down.png
+# @raycast.icon ../../icons/down.png
 
 
 # Documentation:

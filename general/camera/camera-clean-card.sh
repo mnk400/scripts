@@ -6,7 +6,7 @@
 # @raycast.mode fullOutput
 
 # Optional parameters:
-# @raycast.icon ../icons/cam.png
+# @raycast.icon ../../icons/cam.png
 
 # Documentation:
 # @raycast.description Cleans and deletes photos off the SD card after a confirmation and ejects it
@@ -22,7 +22,7 @@ echo """
     \`-----'------'------'
 --------------------------------
    SD Card Photo Sync Utility
---------------------------------     
+--------------------------------
     """
 
 SOURCE_DIRS=("RICOH GR" "X-T5")

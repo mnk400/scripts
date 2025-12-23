@@ -1,0 +1,17 @@
+#!/bin/bash
+if [ $# -eq 0 ]; then
+    mapfile -t lines
+else
+    IFS=$'\n' read -d '' -ra lines <<< "$*"
+fi
+
+max_len=0
+for line in "${lines[@]}"; do
+    [ ${#line} -gt $max_len ] && max_len=${#line}
+done
+
+printf "╭%*s╮\n" $((max_len+2)) "" | tr ' ' '─'
+for line in "${lines[@]}"; do
+    printf "│ %-*s │\n" $max_len "$line"
+done
+printf "╰%*s╯\n" $((max_len+2)) "" | tr ' ' '─'
