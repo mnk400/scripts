@@ -1,7 +1,17 @@
 #!/bin/bash
 # Parent wrapper script around all my automation scripts
-# auto descovers automation scripts based on directory based topics
-# and reads descriptions from comment based metadata system (compatible w/ raycast)
+# Auto-discovers automation scripts based on directory-based topics
+# and reads descriptions from comment-based metadata system
+#
+# Scripts can include the following metadata in comments:
+#   Description <text>          - Script description (also supports "@raycast.description:")
+#   Usage: <text>               - Usage instructions
+#   Runbook.ignore              - Exclude script from runbook discovery
+#
+# STRUCTURE:
+# - Topics: Subdirectories containing executable scripts
+# - Standalone: Executable scripts in the root directory
+# - Commands: Scripts within topic directories (topic prefix auto-stripped)
 
 SCRIPTS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
@@ -10,13 +20,23 @@ get_script_metadata() {
     local script="$1"
     local description=""
     local usage=""
+    local ignore=""
 
     if [[ -f "$script" ]]; then
         description=$(grep -m1 "^#.*@raycast\.description\|^#.*Description:" "$script" 2>/dev/null | sed 's/^#[[:space:]]*@raycast\.description[[:space:]]*//' | sed 's/^#[[:space:]]*Description:[[:space:]]*//')
         usage=$(grep -m1 "^#.*Usage:" "$script" 2>/dev/null | sed 's/^#[[:space:]]*Usage:[[:space:]]*//')
+        ignore=$(grep -m1 "^#.*Runbook\.ignore" "$script" 2>/dev/null)
     fi
 
-    echo "${description:-No description available}|${usage}"
+    echo "${description:-No description available}|${usage}|${ignore}"
+}
+
+# Check if script should be ignored
+is_script_ignored() {
+    local script="$1"
+    local metadata=$(get_script_metadata "$script")
+    local ignore=$(echo "$metadata" | cut -d'|' -f3)
+    [[ -n "$ignore" ]]
 }
 
 # Auto-discover topics (directories with executable scripts)
@@ -36,11 +56,13 @@ discover_commands() {
 
     if [[ -d "$topic_dir" ]]; then
         find "$topic_dir" -maxdepth 1 -type f -perm +111 | sort | while read -r script; do
-            local basename=$(basename "$script")
-            local command_name="${basename%.*}"
-            # Remove topic prefix if present (e.g., unraid-fix-networking -> fix-networking)
-            command_name="${command_name#$topic-}"
-            echo "$command_name|$script"
+            if ! is_script_ignored "$script"; then
+                local basename=$(basename "$script")
+                local command_name="${basename%.*}"
+                # Remove topic prefix if present (e.g., unraid-fix-networking -> fix-networking)
+                command_name="${command_name#$topic-}"
+                echo "$command_name|$script"
+            fi
         done
     fi
 }
@@ -48,9 +70,11 @@ discover_commands() {
 # Auto-discover standalone scripts (in root directory)
 discover_standalone() {
     find "$SCRIPTS_DIR" -maxdepth 1 -type f -perm +111 ! -name "runbook*" | sort | while read -r script; do
-        local basename=$(basename "$script")
-        local command_name="${basename%.*}"
-        echo "$command_name|$script"
+        if ! is_script_ignored "$script"; then
+            local basename=$(basename "$script")
+            local command_name="${basename%.*}"
+            echo "$command_name|$script"
+        fi
     done
 }
 

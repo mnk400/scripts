@@ -11,6 +11,7 @@
 # Documentation:
 # @raycast.description Opens Ghostty and runs NAS sync script
 # @raycast.author Manik
+# Runbook.ignore
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 

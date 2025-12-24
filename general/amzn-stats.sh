@@ -6,7 +6,7 @@
 # @raycast.mode inline
 # @raycast.refreshTime 20m
 
-# Optional parameters
+# Optional parameter
 # @raycast.icon ../icons/sidewaysup.png
 
 # @Documentation:
