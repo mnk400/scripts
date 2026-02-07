@@ -103,7 +103,7 @@ main() {
             show_usage
             exit 0
             ;;
-        documents|projects|photos)
+        all|documents|projects|photos)
             ;;
         *)
             error "Invalid option: $mode"

@@ -48,6 +48,9 @@ start_loading() {
     ) &
 
     echo $! > /tmp/loading_pid
+
+    # Set trap to cleanup on Ctrl+C
+    trap 'stop_loading; exit 130' INT
 }
 
 stop_loading() {
@@ -61,6 +64,9 @@ stop_loading() {
     fi
 
     printf "   \b\b\b$success_msg\n"
+
+    # Remove the trap
+    trap - INT
 }
 
 # -----------------------------------------------
