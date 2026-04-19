@@ -4,3 +4,5 @@ build
 dist
 Desktop.ini
 *.log
+*.pyc
+__init__*
