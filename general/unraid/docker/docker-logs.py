@@ -1,10 +1,13 @@
 #!/usr/bin/env python3
 # Description: Tail Docker container logs on UnRaid server via the Unraid API
-# Usage: unraid-docker-logs.py <container-name> [--lines N]
+# Usage: docker-logs.py <container-name> [--lines N]
 
 import sys
 import time
-sys.path.insert(0, sys.path[0] or ".")
+from pathlib import Path
+
+SCRIPT_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(SCRIPT_DIR.parent))
 
 from lib.api import graphql, find_container, get_containers, container_name
 
@@ -28,7 +31,7 @@ def print_lines(lines):
 
 
 def usage():
-    print("Usage: unraid-docker-logs.py <container-name> [--lines N]")
+    print("Usage: docker-logs.py <container-name> [--lines N]")
     print("")
     print("Tails Docker container logs. Press Ctrl+C to stop.")
     print("")
